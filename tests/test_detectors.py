@@ -1,8 +1,47 @@
 """Tests for outlier detection algorithms."""
 
 import pytest
+import pandas as pd
+import numpy as np
 
-pytest.skip("Requires scipy and scikit-learn dependencies", allow_module_level=True)
+try:
+    from src.outlier_detectors import (
+        EuclideanDetector, MahalanobisDetector,
+        LOFDetector, IsolationForestDetector,
+        OutlierDetectionPipeline
+    )
+    ML_AVAILABLE = True
+except ImportError:
+    ML_AVAILABLE = False
+
+
+@pytest.fixture
+def sample_dataframe():
+    """Create a sample DataFrame with embeddings."""
+    np.random.seed(42)
+    embeddings = [np.random.rand(10) for _ in range(20)]
+    return pd.DataFrame({
+        'Text': [f'Document {i}' for i in range(20)],
+        'Embeddings': embeddings,
+        'Label': list(range(20)),
+        'Class Name': ['class_a'] * 10 + ['class_b'] * 10
+    })
+
+
+@pytest.mark.skipif(not ML_AVAILABLE, reason="ML dependencies not available")
+def test_euclidean_detector():
+    """Test Euclidean detector initialization."""
+    detector = EuclideanDetector(radius=0.5)
+    assert detector.radius == 0.5
+    assert detector.name == "Euclidean"
+
+
+@pytest.mark.skipif(not ML_AVAILABLE, reason="ML dependencies not available")
+def test_isolation_forest_detector():
+    """Test Isolation Forest detector initialization."""
+    detector = IsolationForestDetector(contamination=0.1)
+    assert detector.contamination == 0.1
+    assert detector.name == "IsolationForest"
 
 @pytest.fixture
 def sample_dataframe():
