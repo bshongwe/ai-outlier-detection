@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y \
     && useradd --create-home --shell /bin/bash app
 
 # Copy requirements first for better caching
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-minimal.txt .
+RUN pip install --no-cache-dir -r requirements-minimal.txt
 
 # Copy application code
 COPY . .

@@ -1,0 +1,42 @@
+name: ML Dependencies Test
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 0'  # Weekly on Sunday
+
+jobs:
+  ml-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Free up space
+      run: |
+        sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost "$AGENT_TOOLSDIRECTORY"
+        df -h
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential gfortran libopenblas-dev liblapack-dev
+    
+    - name: Install ML dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install --no-cache-dir numpy scipy scikit-learn
+        pip install --no-cache-dir -r requirements.txt
+      timeout-minutes: 20
+    
+    - name: Test ML components
+      run: |
+        python -c "import scipy; import sklearn; import umap; print('✅ ML dependencies work')"
+        pytest tests/test_detectors.py -v --tb=short
+      timeout-minutes: 10
