@@ -123,36 +123,34 @@ make docker-run
 ## 🏗️ System Architecture
 
 ```mermaid
-architecture-beta
-    group api(cloud)[External APIs]
+flowchart TD
+    subgraph API["🌐 External APIs"]
+        A[Nebius AI API]
+        B[BGE Embeddings]
+        C[Meta-Llama-3.1]
+    end
     
-    service nebius(internet)[Nebius AI API] in api
-    service embedding(internet)[BGE Embeddings] in api
-    service llm(internet)[Meta-Llama-3.1] in api
+    subgraph Pipeline["⚙️ ML Pipeline"]
+        D[Data Preprocessing]
+        E[Detection Algorithms]
+        F[Consensus Analysis]
+        G[UMAP Visualization]
+    end
     
-    group pipeline(server)[ML Pipeline]
+    subgraph Storage["💾 Data Storage"]
+        H[20 Newsgroups Dataset]
+        I[Results and Reports]
+    end
     
-    service preprocess(server)[Data Preprocessing] in pipeline
-    service algorithms(server)[Detection Algorithms] in pipeline
-    service analysis(server)[Consensus Analysis] in pipeline
-    service viz(server)[UMAP Visualization] in pipeline
-    
-    group storage(disk)[Data Storage]
-    
-    service dataset(disk)[20 Newsgroups] in storage
-    service results(disk)[Results & Reports] in storage
-    
-    nebius:L -- R:preprocess
-    embedding:L -- R:algorithms
-    llm:L -- R:analysis
-    
-    dataset:T -- B:preprocess
-    preprocess:R -- L:algorithms
-    algorithms:R -- L:analysis
-    analysis:B -- T:viz
-    
-    analysis:B -- T:results
-    viz:B -- T:results
+    A --> D
+    B --> E
+    C --> F
+    H --> D
+    D --> E
+    E --> F
+    F --> G
+    F --> I
+    G --> I
 ```
 
 ## 📖 Methodology Deep Dive
@@ -304,7 +302,7 @@ graph TD
     A --> C[Calculate Covariance Σ]
     B --> D[Mahalanobis Distance Formula]
     C --> D
-    D --> E[D² = (x-μ)ᵀΣ⁻¹(x-μ)]
+    D --> E[Distance Calculation]
     E --> F[Chi-Square Threshold]
     F --> G[Statistical Confidence 📊]
     
