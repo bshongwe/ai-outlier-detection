@@ -168,4 +168,15 @@ async def list_results():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import os
+    
+    port = int(os.getenv("API_PORT", 8000))
+    host = os.getenv("API_HOST", "0.0.0.0")
+    workers = int(os.getenv("WORKERS", 1))
+    
+    if os.getenv("ENVIRONMENT") == "production":
+        # Production should use gunicorn, this is fallback
+        uvicorn.run(app, host=host, port=port, workers=workers)
+    else:
+        # Development mode
+        uvicorn.run(app, host=host, port=port, reload=True)
