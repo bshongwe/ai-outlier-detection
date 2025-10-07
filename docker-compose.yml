@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  outlier-detection-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - NEBIUS_API_KEY=${NEBIUS_API_KEY}
+    volumes:
+      - ./results:/app/results
+      - ./api_results:/app/api_results
+    restart: unless-stopped
+    
+  outlier-detection-cli:
+    build: .
+    command: python cli.py run
+    environment:
+      - NEBIUS_API_KEY=${NEBIUS_API_KEY}
+    volumes:
+      - ./results:/app/results
+    profiles:
+      - cli
