@@ -37,7 +37,7 @@ jobs:
     - name: Lint with flake8
       run: |
         pip install flake8
-        flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503 || echo "Linting issues found but continuing..."
+        flake8 src/ tests/ || echo "Linting issues found but continuing..."
     
     - name: Type check with mypy
       run: |
